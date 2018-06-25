@@ -5,7 +5,7 @@ use std::hash::Hasher;
 use std::collections::hash_map::DefaultHasher;
 use std::mem::transmute;
 
-pub fn create_gradient(corner: Vec<f32>) -> Vec<f32> {
+pub fn create_gradient(corner: &Vec<f32>) -> Vec<f32> {
     //////////////////////////////////////////////
     ///// Step 1: get a hash from the vector /////
     //////////////////////////////////////////////
