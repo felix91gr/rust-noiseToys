@@ -5,3 +5,6 @@ authors = ["Félix Fischer <felix91gr@gmail.com>", "Vicho Errázuriz <verrazuriz
 
 [dependencies]
 rand = "0.5"
+
+[dev-dependencies]
+quickcheck = "0.6"
