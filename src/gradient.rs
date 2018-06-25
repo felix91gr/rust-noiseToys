@@ -11,11 +11,11 @@ pub fn create_gradient(corner: Vec<f32>) -> Vec<f32> {
     //////////////////////////////////////////////
 
     // 1.1: Create a hasher
-	let mut hasher = DefaultHasher::new();
+    let mut hasher = DefaultHasher::new();
 
-	// 1.2: Feed the vector's bits to the hasher
+    // 1.2: Feed the vector's bits to the hasher
     for _x in corner.iter() {
-		hasher.write_u32(_x.to_bits());
+        hasher.write_u32(_x.to_bits());
     }
 
     // 1.3: Compute the hash
@@ -37,14 +37,14 @@ pub fn create_gradient(corner: Vec<f32>) -> Vec<f32> {
     let mut rng_seed = [0; 16];
 
     for i in 0..8 {
-    	rng_seed[i] = bytes_of_hash[i];
+        rng_seed[i] = bytes_of_hash[i];
     }
 
     // 2.3: Create a seeded PRNG with the hash's bytes
     let mut s_rng: XorShiftRng = SeedableRng::from_seed(rng_seed);
 
 
-	//////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
     ///// Step 3: populate a vector with pseudorandom -1s and 1s /////
     //////////////////////////////////////////////////////////////////
 
@@ -57,17 +57,17 @@ pub fn create_gradient(corner: Vec<f32>) -> Vec<f32> {
     // 3.3: Fill the gradient with random directions
     for _x in corner.iter() {
 
-    	// 3.3.1: Direction must be +1 or -1
-    	let new_dir = ((s_rng.gen_range(0, 2) as f32) * 2.0) - 1.0;
-    	
-    	// 3.3.2: In order to have a unitary gradient, we must use our factor
-    	let new_dir_ponderated = new_dir * dimentional_ponderator; 
+        // 3.3.1: Direction must be +1 or -1
+        let new_dir = ((s_rng.gen_range(0, 2) as f32) * 2.0) - 1.0;
+        
+        // 3.3.2: In order to have a unitary gradient, we must use our factor
+        let new_dir_ponderated = new_dir * dimentional_ponderator; 
 
-    	// 3.3.3: Put the finished direction into the gradient's vector
-    	seeded_gradient.push(new_dir_ponderated);
+        // 3.3.3: Put the finished direction into the gradient's vector
+        seeded_gradient.push(new_dir_ponderated);
     }
 
-	//////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     ///// Step 4: remove one element from it and return the gradient /////
     //////////////////////////////////////////////////////////////////////
 
@@ -77,7 +77,7 @@ pub fn create_gradient(corner: Vec<f32>) -> Vec<f32> {
     // 4.2: Zero that direction
     seeded_gradient[zeroed_index] = 0.0;
 
-	///////////////////////
+    ///////////////////////
     ///// Return Step /////
     ///////////////////////
 
