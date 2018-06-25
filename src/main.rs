@@ -14,3 +14,23 @@ fn main() {
         println!("> {}", _x);
     }
 }
+
+#[cfg(test)]
+#[macro_use]
+extern crate quickcheck;
+
+#[cfg(test)]
+mod tests {
+
+	// use gradient::create_gradient;
+	use gradient::create_gradient;
+
+	quickcheck! {
+	  fn prop(xs: Vec<f32>) -> bool {
+
+	      create_gradient(xs) != xs
+	  }
+	}
+
+
+}
