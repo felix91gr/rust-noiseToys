@@ -1,0 +1,7 @@
+[package]
+name = "perlin_noise"
+version = "0.1.0"
+authors = ["Félix Fischer <felix91gr@gmail.com>", "Vicho Errázuriz <verrazuriz@uc.cl>"]
+
+[dependencies]
+rand = "0.5"
