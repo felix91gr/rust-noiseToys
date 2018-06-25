@@ -40,13 +40,12 @@ mod tests {
 		f32::abs(lhs - rhs) <= tolerance
 	}
 
+	use quickcheck::TestResult;
 	use gradient::create_gradient;
 
 	quickcheck! {
 		// Checks that generated gradients are unitary
-		// FIXME: should _discard_ invalid input instead
-		// of returning true.
-		fn gradients_are_unitary(xs: Vec<f32>) -> bool {
+		fn gradients_are_unitary(xs: Vec<f32>) -> TestResult {
 
 			// Unitary gradients for 1D and 0D don't 
 			// make sense, at least under how 
@@ -57,18 +56,18 @@ mod tests {
 
 				let gradient_size = size(&gradient);
 
-				compare_with_tolerance(1.0, gradient_size, 0.01)
+				let res = compare_with_tolerance(1.0, gradient_size, 0.01);
+			
+				TestResult::from_bool(res)
 			}
 			else {
-			    true
+			    TestResult::discard()
 			}
 		}
 
 		// Checks that generated gradients have the same number
 		// of dimensions as the vector they were born from.
-		// FIXME: should _discard_ invalid input instead
-		// of returning true.
-		fn gradients_are_of_same_dimensions(xs: Vec<f32>) -> bool {
+		fn gradients_are_of_same_dimensions(xs: Vec<f32>) -> TestResult {
 		    // Unitary gradients for 1D and 0D don't 
 			// make sense, at least under how 
 			// create_gradient is defined.
@@ -76,10 +75,12 @@ mod tests {
 
 				let gradient = create_gradient(&xs);
 
-				gradient.len() == xs.len()
+				let res = gradient.len() == xs.len();
+			
+				TestResult::from_bool(res)
 			}
 			else {
-			    true
+			    TestResult::discard()
 			}
 		}
 	}
