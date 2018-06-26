@@ -16,7 +16,6 @@ fn main() {
 }
 
 #[cfg(test)]
-#[macro_use]
 extern crate quickcheck;
 
 #[cfg(test)]
@@ -41,11 +40,15 @@ mod tests {
 	}
 
 	use quickcheck::TestResult;
+	use quickcheck::QuickCheck;
 	use gradient::create_gradient;
 
-	quickcheck! {
-		// Checks that generated gradients are unitary
-		fn gradients_are_unitary(xs: Vec<f32>) -> TestResult {
+
+	// Checks that generated gradients are unitary
+	#[test]
+	fn gradients_are_unitary() {
+		// Test function. We call it using QuickCheck, below.
+		fn g_are_u(xs: Vec<f32>) -> TestResult {
 
 			// Unitary gradients for 1D and 0D don't 
 			// make sense, at least under how 
@@ -65,9 +68,18 @@ mod tests {
 			}
 		}
 
-		// Checks that generated gradients have the same number
-		// of dimensions as the vector they were born from.
-		fn gradients_are_of_same_dimensions(xs: Vec<f32>) -> TestResult {
+		QuickCheck::new()
+			.tests(100_000)
+			.max_tests(1_000_000)
+			.quickcheck(g_are_u as fn(Vec<f32>) -> TestResult);
+	}
+
+	// Checks that generated gradients have the same number
+	// of dimensions as the vector they were born from.
+	#[test]
+	fn gradients_are_of_same_dimensions() {
+		// Test function. We call it using QuickCheck, below.
+		fn g_are_of_s_d(xs: Vec<f32>) -> TestResult {
 		    // Unitary gradients for 1D and 0D don't 
 			// make sense, at least under how 
 			// create_gradient is defined.
@@ -83,7 +95,10 @@ mod tests {
 			    TestResult::discard()
 			}
 		}
+
+		QuickCheck::new()
+			.tests(1_000)
+			.max_tests(10_000)
+			.quickcheck(g_are_of_s_d as fn(Vec<f32>) -> TestResult);
 	}
-
-
 }
