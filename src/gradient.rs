@@ -1,9 +1,8 @@
 use rand::prelude::*;
-use rand::prng::XorShiftRng;
+use rand::prng::IsaacRng;
 
 use std::hash::Hasher;
 use std::collections::hash_map::DefaultHasher;
-use std::mem::transmute;
 
 pub fn create_gradient(corner: &Vec<f32>) -> Vec<f32> {
     //////////////////////////////////////////////
@@ -25,24 +24,8 @@ pub fn create_gradient(corner: &Vec<f32>) -> Vec<f32> {
     ///// Step 2: seed a prng with that hash /////
     //////////////////////////////////////////////
 
-    // 2.1: Convert hash into bytes
-    /* 
-       This has to be unsafe until Int.to_bytes gets
-       out of nightly: 
-       https://doc.rust-lang.org/std/primitive.u64.html#method.to_bytes
-    */
-    let bytes_of_hash = unsafe { transmute::<u64, [u8; 8]>(hash_of_corner) };
-
-    // 2.2: Fill the seed (byte-array) with zeroes and the hash's bytes 
-    let mut rng_seed = [0; 16];
-
-    for i in 0..8 {
-        rng_seed[i] = bytes_of_hash[i];
-    }
-
-    // 2.3: Create a seeded PRNG with the hash's bytes
-    let mut s_rng: XorShiftRng = SeedableRng::from_seed(rng_seed);
-
+    // 2.1: Create a seeded PRNG with the hash's bytes
+    let mut s_rng: IsaacRng = IsaacRng::new_from_u64(hash_of_corner);
 
     //////////////////////////////////////////////////////////////////
     ///// Step 3: populate a vector with pseudorandom -1s and 1s /////
@@ -81,5 +64,5 @@ pub fn create_gradient(corner: &Vec<f32>) -> Vec<f32> {
     ///// Return Step /////
     ///////////////////////
 
-    return seeded_gradient;
+    seeded_gradient
 }
