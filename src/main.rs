@@ -140,13 +140,11 @@ mod tests {
 	fn gradient_mean_is_zero() {
 
 		fn test_for_length_n (n: usize) -> bool {
-			let upper_dimension_bound = 100;
-
-			if n < 2 || upper_dimension_bound < n {
+			if n < 2 {
 			    false
 			}
 			else {
-				let size_of_sample = 100;
+				let size_of_sample = 101;
 
 				println!("Testing for n = {}, with sample size = {}", n, size_of_sample);
 
@@ -177,29 +175,31 @@ mod tests {
 					total[i] = total[i] / (size_of_sample as f32);
 				}
 
+				let deg_of_freedom = size_of_sample - 1;
+
 				// We calculate the sample std_dev
 				for i in 0..n {
 					for j in 0..size_of_sample {
 						let delta_of_sample = total[i] - all_gradients[j][i];
 						std_dev[i] += f32::sqrt(delta_of_sample * delta_of_sample);
 					}
-					std_dev[i] = std_dev[i] / ((size_of_sample - 1) as f32);
+					std_dev[i] = std_dev[i] / (deg_of_freedom as f32);
 					std_dev[i] = f32::sqrt(std_dev[i]);
 				}
 
 				// We use t-Student to figure out the confidence interval
 				// These values are for 99% confidence
 				let t_star : f32 = 
-					if size_of_sample >= 1000 {
+					if deg_of_freedom >= 1_000 {
 					    2.581
 					}
-					else if size_of_sample >= 100 {
+					else if deg_of_freedom >= 100 {
 					    2.626
 					}
-					else if size_of_sample >= 80 {
+					else if deg_of_freedom >= 80 {
 						2.639
 					}
-					else if size_of_sample >= 60 {
+					else if deg_of_freedom >= 60 {
 					    2.660
 					}
 					else {
@@ -222,21 +222,16 @@ mod tests {
 				for i in 0..n {
 					let this_zero_is_within_margin = lower_bounds[i] <= 0.0 && 0.0 <= upper_bounds[i];
 
-					they_were_within_margin = they_were_within_margin && this_zero_is_within_margin;
-				}
+					println!("Bounds for 99% confidence: {}..{}", lower_bounds[i], upper_bounds[i]);
 
-				if they_were_within_margin {
-					println!("Passed at n = {}. Mean vector: {:?}. std_dev vector: {:?}", n, total, std_dev);
-				}
-				else {
-					println!("Failed at n = {}. Mean vector: {:?}. std_dev vector: {:?}", n, total, std_dev);
+					they_were_within_margin = they_were_within_margin && this_zero_is_within_margin;
 				}
 
 				they_were_within_margin
 			}
 		}
 
-		let max_dimensions : usize = 100;
+		let max_dimensions : usize = 40;
 
 		println!("Testing for dimensions from n = 2 to n = {}", max_dimensions);
 
